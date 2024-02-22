@@ -1,5 +1,4 @@
 import { Image, StyleSheet, Text, View } from "react-native"
-import { getRandomColor } from "../services/utils.service"
 
 const ContactPreview = ({ contact }) => {
   return (
@@ -7,7 +6,7 @@ const ContactPreview = ({ contact }) => {
       {contact.imgUri ?
         <Image source={{ uri: contact.imgUri }} style={styles.profileImg} />
         :
-        <Text style={[styles.profileImg, { backgroundColor: getRandomColor(), opacity: 0.76 }]}>{contact.section}</Text>
+        <Text style={[styles.profileImg, { backgroundColor: contact.profileColor, opacity: 0.76 }]}>{contact.section}</Text>
       }
       <View style={styles.infoContainer}>
         <Text style={styles.contactName}>{contact.firstName} {contact.lastName}</Text>

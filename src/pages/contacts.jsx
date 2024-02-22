@@ -1,13 +1,14 @@
 import * as ContactsList from 'expo-contacts'
-import { View, StyleSheet, Text, Image } from "react-native"
+import { View, StyleSheet, Text } from "react-native"
 import { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView, TextInput } from 'react-native-gesture-handler'
 import ContactsListCmp from '../cmps/contact-list'
+import { getRandomColor } from '../services/utils.service'
 
 const Contacts = () => {
   const [contacts, setContacts] = useState(null)
-  // const []
+  const [filterInput, setFilterInput] = useState(null)
 
   useEffect(() => {
     (async () => {
@@ -24,7 +25,8 @@ const Contacts = () => {
               lastName: contact.lastName,
               imgUri: contact.imageAvailable ? contact.image.uri : null,
               phoneNumber: contact.phoneNumbers[0].number,
-              section: contact.firstName[0].toLocaleUpperCase()
+              section: contact.firstName[0].toLocaleUpperCase(),
+              profileColor: getRandomColor()
             }
           }).sort((a, b) => a.section.localeCompare(b.section))
           setContacts(sortedData)
@@ -34,6 +36,10 @@ const Contacts = () => {
     })()
   }, [])
 
+  const handleFilterChange = (txt) => {
+    setFilterInput(txt)
+  }
+
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <ScrollView style={styles.scrollContainer}>
@@ -42,10 +48,11 @@ const Contacts = () => {
         </View>
         <TextInput
           style={styles.input}
-          // onChangeText={}
+          onChangeText={handleFilterChange}
+          value={filterInput}
           placeholder='Search contacts'
         />
-        {contacts?.length > 0 && <ContactsListCmp contacts={contacts} />}
+        {contacts?.length > 0 && <ContactsListCmp contacts={contacts} filter={filterInput}/>}
       </ScrollView>
     </SafeAreaView>
   )
