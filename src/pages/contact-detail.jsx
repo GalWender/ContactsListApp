@@ -1,9 +1,8 @@
 import { useNavigation, useRoute } from '@react-navigation/native'
-import * as ContactsList from 'expo-contacts'
 import { useEffect, useState } from "react"
 import { Image, SafeAreaView, StyleSheet, Text, View } from "react-native"
 import { TouchableOpacity } from "react-native-gesture-handler"
-import { getRandomColor } from '../services/utils.service'
+import { expoContactsService } from '../services/exoContacts.service'
 
 
 const ContactDetail = () => {
@@ -14,27 +13,15 @@ const ContactDetail = () => {
 
     useEffect(() => {
         (async () => {
-            const { status } = await ContactsList.requestPermissionsAsync()
-            if (status === 'granted') {
-                const { data } = await ContactsList.getContactsAsync({
-                    fields: [ContactsList.Fields.FirstName, ContactsList.Fields.LastName, ContactsList.Fields.PhoneNumbers, ContactsList.Fields.Image],
-                })
-                if (data.length > 0) {
-                    const filterdContact = data.map((contact) => {
-                        return {
-                            _id: contact.id,
-                            firstName: contact.firstName,
-                            lastName: contact.lastName,
-                            imgUri: contact.imageAvailable ? contact.image.uri : null,
-                            phoneNumber: contact.phoneNumbers[0].number,
-                            section: contact.firstName[0].toLocaleUpperCase(),
-                            profileColor: getRandomColor()
-                        }
-                    }).find((contact) => contact._id === id)
-                    setContact(filterdContact)
-                }
+            try {
+              const sortedContacts = await expoContactsService.getContacts()
+              const filterdContact = sortedContacts.find((contact) => contact._id === id)
+              setContact(filterdContact)
             }
-        })()
+            catch (err) {
+              console.log('there was an error retrieving contacts', err);
+            }
+          })()
     }, [])
 
     const handleBack = () => {

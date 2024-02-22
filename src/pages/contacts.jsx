@@ -1,10 +1,9 @@
-import * as ContactsList from 'expo-contacts'
 import { View, StyleSheet, Text } from "react-native"
 import { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView, TextInput } from 'react-native-gesture-handler'
 import ContactsListCmp from '../cmps/contact-list'
-import { getRandomColor } from '../services/utils.service'
+import { expoContactsService } from '../services/exoContacts.service'
 
 const Contacts = () => {
   const [contacts, setContacts] = useState(null)
@@ -12,25 +11,13 @@ const Contacts = () => {
 
   useEffect(() => {
     (async () => {
-      const { status } = await ContactsList.requestPermissionsAsync()
-      if (status === 'granted') {
-        const { data } = await ContactsList.getContactsAsync({
-          fields: [ContactsList.Fields.FirstName, ContactsList.Fields.LastName, ContactsList.Fields.PhoneNumbers, ContactsList.Fields.Image],
-        })
-        if (data.length > 0) {
-          const sortedData = data.map((contact) => {
-            return {
-              _id: contact.id,
-              firstName: contact.firstName,
-              lastName: contact.lastName,
-              imgUri: contact.imageAvailable ? contact.image.uri : null,
-              phoneNumber: contact.phoneNumbers[0].number,
-              section: contact.firstName[0].toLocaleUpperCase(),
-              profileColor: getRandomColor()
-            }
-          }).sort((a, b) => a.section.localeCompare(b.section))
-          setContacts(sortedData)
-        }
+      try {
+        const sortedContacts = await expoContactsService.getContacts()
+        sortedContacts.sort((a, b) => a.section.localeCompare(b.section))
+        setContacts(sortedContacts)
+      }
+      catch (err) {
+        console.log('there was an error retrieving contacts', err);
       }
     })()
   }, [])
@@ -51,7 +38,7 @@ const Contacts = () => {
           value={filterInput}
           placeholder='Search contacts'
         />
-        {contacts?.length > 0 && <ContactsListCmp contacts={contacts} filter={filterInput}/>}
+        {contacts?.length > 0 && <ContactsListCmp contacts={contacts} filter={filterInput} />}
       </ScrollView>
     </SafeAreaView>
   )

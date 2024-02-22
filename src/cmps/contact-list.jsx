@@ -8,13 +8,17 @@ const ContactListCmp = ({ contacts, filter }) => {
 
 
     useEffect(() => {
-        if (!filter) setFilteredContacts(contacts)
         const filteredContacts = contacts?.filter((contact) =>
-            `${contact.firstName} ${contact.lastName}`?.toLowerCase().includes(filter?.toLowerCase())
+            `${contact.firstName}${contact.lastName}`?.toLowerCase().includes(filter?.toLowerCase())
             ||
             contact.phoneNumber.includes(filter)
         )
-        setFilteredContacts(filteredContacts)
+        if(filterdContacts) {
+            setFilteredContacts(filteredContacts)
+        }
+        else {
+            setFilteredContacts(contacts)
+        }
     }, [filter])
 
     const renderContactsBySection = () => {
