@@ -1,7 +1,7 @@
-import 'react-native-gesture-handler';
-import { StyleSheet } from 'react-native';
-import AppNavigator from './src/navigation/app-navigator';
-import { NavigationContainer } from '@react-navigation/native';
+import 'react-native-gesture-handler'
+import { StyleSheet } from 'react-native'
+import AppNavigator from './src/navigation/app-navigator'
+import { NavigationContainer } from '@react-navigation/native'
 
 
 export default function App() {
@@ -10,7 +10,7 @@ export default function App() {
     <NavigationContainer>
       <AppNavigator />
     </NavigationContainer>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -20,4 +20,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+})
