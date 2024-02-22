@@ -1,39 +1,79 @@
 import * as ContactsList from 'expo-contacts'
-import { View, StyleSheet, Text } from "react-native"
-import { useEffect } from 'react';
+import { View, StyleSheet, Text, Image } from "react-native"
+import { useEffect, useState } from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { ScrollView, TextInput } from 'react-native-gesture-handler'
+import ContactsListCmp from '../cmps/contact-list'
 
 const Contacts = () => {
+  const [contacts, setContacts] = useState(null)
+  // const []
 
-    useEffect(()=>{
-        (async () => {
-          const { status } = await ContactsList.requestPermissionsAsync();
-          if (status === 'granted') {
-            const { data } = await ContactsList.getContactsAsync({
-              fields: [ContactsList.Fields.FirstName],
-            });
-    
-            if (data.length > 0) {
-              const contact = data[0];
-              console.log(contact);
+  useEffect(() => {
+    (async () => {
+      const { status } = await ContactsList.requestPermissionsAsync()
+      if (status === 'granted') {
+        const { data } = await ContactsList.getContactsAsync({
+          fields: [ContactsList.Fields.FirstName, ContactsList.Fields.LastName, ContactsList.Fields.PhoneNumbers, ContactsList.Fields.Image],
+        })
+        if (data.length > 0) {
+          const sortedData = data.map((contact) => {
+            return {
+              _id: contact.id,
+              firstName: contact.firstName,
+              lastName: contact.lastName,
+              imgUri: contact.imageAvailable ? contact.image.uri : null,
+              phoneNumber: contact.phoneNumbers[0].number,
+              section: contact.firstName[0].toLocaleUpperCase()
             }
-          }
-        })()
-      },[])
-    
-    return (
+          }).sort((a, b) => a.section.localeCompare(b.section))
+          setContacts(sortedData)
+          console.log(sortedData)
+        }
+      }
+    })()
+  }, [])
+
+  return (
+    <SafeAreaView style={styles.safeAreaContainer}>
+      <ScrollView style={styles.scrollContainer}>
         <View>
-          <Text>helldddo</Text>
+          <Text style={styles.header}>Contacts</Text>
         </View>
-    )
+        <TextInput
+          style={styles.input}
+          // onChangeText={}
+          placeholder='Search contacts'
+        />
+        {contacts?.length > 0 && <ContactsListCmp contacts={contacts} />}
+      </ScrollView>
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "#fff",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-  })
+  safeAreaContainer: {
+    flex: 1,
+    backgroundColor: "#f2f2f2",
+    paddingVertical: 24,
+    paddingHorizontal: 24,
+  },
+  scrollContainer: {
+
+  },
+  header: {
+    fontSize: 32,
+    fontWeight: "700",
+    color: "#1d1d1d",
+    marginBottom: 12,
+
+  },
+  input: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    backgroundColor: "#d6d6d6",
+    borderRadius: 12
+  },
+})
 
 export default Contacts
