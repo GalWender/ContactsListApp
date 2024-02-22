@@ -30,7 +30,6 @@ const Contacts = () => {
             }
           }).sort((a, b) => a.section.localeCompare(b.section))
           setContacts(sortedData)
-          console.log(sortedData)
         }
       }
     })()

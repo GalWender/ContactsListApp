@@ -1,23 +1,38 @@
-import { Image, StyleSheet, Text, View } from "react-native"
+import { useNavigation } from "@react-navigation/native"
+import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native"
 
 const ContactPreview = ({ contact }) => {
+  const navigation = useNavigation()
+
+  const handleContactSelect = () => {
+    navigation.navigate('ContactDetail',{id:contact._id})
+  }
   return (
-    <View style={styles.contactPreview}>
-      {contact.imgUri ?
-        <Image source={{ uri: contact.imgUri }} style={styles.profileImg} />
-        :
-        <Text style={[styles.profileImg, { backgroundColor: contact.profileColor, opacity: 0.76 }]}>{contact.section}</Text>
-      }
-      <View style={styles.infoContainer}>
-        <Text style={styles.contactName}>{contact.firstName} {contact.lastName}</Text>
-        <Text style={styles.contactPhone}>{contact.phoneNumber}</Text>
+    <TouchableOpacity
+    onPress={handleContactSelect}
+    >
+      <View style={styles.contactPreview}>
+        {contact.imgUri ?
+          <Image source={{ uri: contact.imgUri }} style={styles.profileImg} />
+          :
+          <Text style={[styles.profileText, { backgroundColor: contact.profileColor, opacity: 0.76 }]}>{contact.section}</Text>
+        }
+        <View style={styles.infoContainer}>
+          <Text style={styles.contactName}>{contact.firstName} {contact.lastName}</Text>
+          <Text style={styles.contactPhone}>{contact.phoneNumber}</Text>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 
 const styles = StyleSheet.create({
   profileImg: {
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+  },
+  profileText:{
     borderRadius: 20,
     width: 40,
     height: 40,
