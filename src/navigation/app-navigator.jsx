@@ -22,6 +22,7 @@ const AppNavigator = () => {
         <Stack.Navigator>
             {routes.map((route) =>
                 <Stack.Screen
+                    key={route.name}
                     name={route.name}
                     component={route.component}
                     options={route.options}
